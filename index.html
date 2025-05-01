@@ -11,19 +11,21 @@
     />
     <style>
       :root {
-        --primary: #00e7ff; /* Neon Cyan */
-        --primary-dark: #00b8d4; /* Darker Cyan */
-        --primary-light: #66f1ff; /* Lighter Cyan */
-        --secondary: #ff007a; /* Neon Pink */
-        --accent: #ffcc00; /* Neon Yellow */
-        --dark: #1a1d2b; /* Deep Blue-Gray */
-        --darker: #0f1120; /* Darker Blue-Gray */
-        --light: #ffffff; /* Pure White */
-        --gray: #e0e0e0; /* Light Gray */
-        --success: #00ff9d; /* Neon Green */
-        --danger: #ff3366; /* Neon Red */
-        --text: #f0f2f5; /* Off-White */
-        --text-light: #b0b8d1; /* Muted Blue-Gray */
+        
+    --primary: #4e91fc;       
+    --primary-dark: #2563eb;  
+    --primary-light: #a3c4f3; 
+    --secondary: #f43f5e;     
+    --accent: #fbbf24;        
+    --dark: #1f2937;          
+    --darker: #111827;        
+    --light: #f9fafb;        
+    --gray: #d1d5db;
+    --success: #10b981;       
+    --text: #f3f4f6;          
+    --text-light: #9ca3af;    
+
+
       }
 
       * {
@@ -52,7 +54,7 @@
         z-index: 1;
       }
 
-      /* Background effects */
+      
       .bg-gradient {
         position: fixed;
         top: 0;
@@ -782,7 +784,7 @@
     </div>
 
     <script>
-      // MQTT setup
+     
       const mqttClient = mqtt.connect("ws://157.173.101.159:9001");
       const bulb = document.getElementById("bulb");
       const statusIndicator = document.getElementById("statusIndicator");
@@ -841,13 +843,13 @@
           brightness * 0.007
         }), 
                                     0 0 ${
-                                      brightness * 1.2
+                                    brightness * 1.2
                                     }px rgba(255, 249, 196, ${
           brightness * 0.005
         })`;
       }
 
-      // Button event listeners
+      
       document.getElementById("turnOnBtn").addEventListener("click", () => {
         mqttClient.publish("/student_group/light_control", "ON");
         console.log("Published: ON");
@@ -860,7 +862,7 @@
         updateLightState(false);
       });
 
-      // Brightness slider
+      
       brightnessSlider.addEventListener("input", function () {
         const brightness = this.value;
         if (bulb.classList.contains("on")) {
@@ -869,7 +871,7 @@
         }
       });
 
-      // 3D effect on mouse move
+      
       const room = document.querySelector(".room");
       document.addEventListener("mousemove", (e) => {
         if (window.innerWidth > 768) {

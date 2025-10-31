@@ -1,11 +1,9 @@
 import paho.mqtt.client as mqtt
 
-# MQTT Broker settings
-broker = "157.173.101.159"  # Assuming same broker as web interface
-port = 1883                  # Standard MQTT port (not WebSockets)
+broker = "157.173.101.159"
+port = 1883
 topic = "/student_group/light_control"
 
-# Callback when connected to MQTT broker
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
         print("Connected to MQTT broker")
@@ -13,7 +11,6 @@ def on_connect(client, userdata, flags, rc):
     else:
         print(f"Connection failed with code {rc}")
 
-# Callback when a message is received
 def on_message(client, userdata, msg):
     payload = msg.payload.decode('utf-8')
     if payload == "ON":
@@ -23,11 +20,9 @@ def on_message(client, userdata, msg):
     else:
         print(f"Unknown command: {payload}")
 
-# Setup MQTT client
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 
-# Connect to broker and start loop
 client.connect(broker, port, 60)
 client.loop_forever()

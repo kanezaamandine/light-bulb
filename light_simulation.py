@@ -11,14 +11,7 @@ def on_connect(client, userdata, flags, rc):
     else:
         print(f"Connection failed with code {rc}")
 
-def on_message(client, userdata, msg):
-    payload = msg.payload.decode('utf-8')
-    if payload == "ON":
-        print("💡 Light is TURNED ON")
-    elif payload == "OFF":
-        print("💡 Light is TURNED OFF")
-    else:
-        print(f"Unknown command: {payload}")
+
 
 client = mqtt.Client()
 client.on_connect = on_connect

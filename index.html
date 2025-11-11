@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Smart Light Control v3</title>
+  <title>Smart Light Control v2</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mqtt/4.3.7/mqtt.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet" />
   <style>
@@ -13,7 +13,6 @@
       --primary: #38bdf8;
       --secondary: #f472b6;
       --success: #22c55e;
-      --error: #ef4444;
       --text: #f9fafb;
       --gray: #94a3b8;
     }
@@ -53,6 +52,7 @@
       width: 330px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       text-align: center;
+      position: relative;
       transition: 0.4s;
     }
 
@@ -117,10 +117,11 @@
     .brightness input[type="range"] {
       width: 100%;
       -webkit-appearance: none;
+      appearance: none;
       height: 6px;
       background: linear-gradient(90deg, var(--primary), var(--secondary));
       border-radius: 3px;
-      outline: none;
+      
     }
 
     .brightness input::-webkit-slider-thumb {
@@ -136,15 +137,6 @@
       margin-top: 35px;
       font-size: 0.9rem;
       color: var(--gray);
-      transition: color 0.3s;
-    }
-
-    footer.connected {
-      color: var(--success);
-    }
-
-    footer.error {
-      color: var(--error);
     }
   </style>
 </head>
@@ -168,50 +160,28 @@
     </div>
   </div>
 
-  <footer id="footer">Connecting to MQTT Broker...</footer>
+  <footer>IoT Connected • MQTT Broker Live</footer>
 
   <script>
-    // --- MQTT CONFIGURATION ---
-    const MQTT_BROKER = "ws://157.173.101.159:9001";
-    const CONTROL_TOPIC = "/student_group/light_control";
-    const STATUS_TOPIC = "/student_group/light_status";
-
-    const mqttClient = mqtt.connect(MQTT_BROKER);
+    const mqttClient = mqtt.connect("ws://157.173.101.159:9001");
     const lamp = document.getElementById("lamp");
     const statusEl = document.getElementById("status");
     const toggleBtn = document.getElementById("toggleBtn");
     const brightnessRange = document.getElementById("brightnessRange");
-    const footer = document.getElementById("footer");
 
     let isOn = false;
 
-    // Restore saved brightness
-    const savedBrightness = localStorage.getItem("brightness");
-    if (savedBrightness) brightnessRange.value = savedBrightness;
-
-    // --- MQTT CONNECTION EVENTS ---
     mqttClient.on("connect", () => {
-      console.log("✅ Connected to MQTT broker");
-      footer.textContent = "Connected to MQTT Broker ✅";
-      footer.classList.add("connected");
-      mqttClient.subscribe(STATUS_TOPIC);
+      console.log("Connected to MQTT broker");
+      mqttClient.subscribe("/student_group/light_status");
     });
 
-    mqttClient.on("error", () => {
-      console.log("❌ MQTT connection error");
-      footer.textContent = "Error connecting to MQTT Broker ❌";
-      footer.classList.remove("connected");
-      footer.classList.add("error");
-    });
-
-    // --- RECEIVE MESSAGES ---
     mqttClient.on("message", (topic, message) => {
       const state = message.toString();
       if (state === "ON") setLamp(true);
       else setLamp(false);
     });
 
-    // --- SET LAMP STATE FUNCTION ---
     function setLamp(state) {
       isOn = state;
       lamp.classList.toggle("on", state);
@@ -221,17 +191,14 @@
       lamp.style.opacity = state ? brightness / 100 : 1;
     }
 
-    // --- TOGGLE LIGHT BUTTON ---
     toggleBtn.addEventListener("click", () => {
       isOn = !isOn;
-      mqttClient.publish(CONTROL_TOPIC, isOn ? "ON" : "OFF");
+      mqttClient.publish("/student_group/light_control", isOn ? "ON" : "OFF");
       setLamp(isOn);
     });
 
-    // --- BRIGHTNESS CONTROL ---
     brightnessRange.addEventListener("input", () => {
       if (isOn) lamp.style.opacity = brightnessRange.value / 100;
-      localStorage.setItem("brightness", brightnessRange.value);
     });
   </script>
 </body>
